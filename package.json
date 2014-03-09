@@ -1,0 +1,18 @@
+{
+  "name": "application-name",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "3.4.8",
+    "hjs": "*",
+    "less-middleware": "*",
+    "keen.io": "0.0.4",
+    "redis": "~0.10.1",
+    "hiredis": "~0.1.16",
+    "ua-parser": "~0.3.3",
+    "uuid": "~1.4.1"
+  }
+}

@@ -1,0 +1,11 @@
+server {
+  listens 80;
+  server_name exampledomain.com;
+
+  location / {
+    proxy_pass  http://localhost:3000; ## make this whatever IP/host:port
+    proxy_set_header  Host $http_host;
+    proxy_set_header  X-Real-IP $remote_addr;
+    proxy_set_header  X_Forwarded-For $proxy_add_x_forwarded_for;
+  }
+}

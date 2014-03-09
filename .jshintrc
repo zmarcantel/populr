@@ -1,0 +1,34 @@
+{
+    // Predefined globals whom JSHint will ignore.
+    "node"          : true,
+    "predef"        : [  // Extra globals.
+        "require"
+    ],
+
+
+    // Development.
+    "devel"         : true,   // Allow development statements e.g. `console.log();`.
+
+    // The Good Parts.
+    "asi"           : false,  // Tolerate Automatic Semicolon Insertion (no semicolons).
+    "laxbreak"      : false,  // Tolerate unsafe line breaks e.g. `return [\n] x` without semicolons.
+    "boss"          : false,  // Tolerate assignments inside if, for & while. Usually conditions & loops are for comparison, not assignments.
+    "curly"         : true,   // Require {} for every new block or scope.
+    "eqeqeq"        : false,  // Require triple equals i.e. `===`.
+    "eqnull"        : false,  // Tolerate use of `== null`.
+    "evil"          : false,  // Tolerate use of `eval`.
+    "immed"         : true,   // Require immediate invocations to be wrapped in parens e.g. `( function(){}() );`
+    "loopfunc"      : false,  // Allow functions to be defined within loops.
+    "shadow"        : false,  // Allows re-define variables later in code e.g. `var x=1; x=2;`.
+
+
+    // Persone styling prefrences.
+    "laxcomma"      : true,
+    "newcap"        : true,   // Require capitalization of all constructor functions e.g. `new F()`.
+    "noempty"       : false,  // Prohibit use of empty blocks.
+    "nonew"         : false,  // Prohibit use of constructors for side-effects.
+    "nomen"         : true,   // Prohibit use of initial or trailing underbars in names.
+    "sub"           : true,   // Tolerate all forms of subscript notation besides dot notation e.g. `dict['key']` instead of `dict.key`.
+    "trailing"      : true ,  // Prohibit trailing whitespaces.
+    "white"         : false   // Check against strict whitespace and indentation rules.
+}

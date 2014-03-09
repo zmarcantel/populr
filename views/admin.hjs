@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Populr</title>
+
+        <meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" />
+
+        <link rel='stylesheet' href='/components/bootstrap/dist/css/bootstrap.min.css' />
+        <link rel='stylesheet' href='/stylesheets/style.css' />
+    </head>
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/admin">{{ title }}</a>
+                </div>
+                <div class="collapse navbar-collapse navbar-right">
+                    <ul class="nav navbar-nav">
+                        <li><a href="#" data-toggle="modal" data-target="#create-url">Create</a></li>
+                        <li><a href="#">Help</a></li>
+                    </ul>
+                    <form class="navbar-form navbar-right">
+                        <input id="token-lookup" type="text" class="form-control" name="token" placeholder="Get info on token...">
+                    </form>
+                </div><!--/.nav-collapse -->
+            </div>
+        </div>
+
+
+        <!--                            -->
+        <!-- Total Stats                -->
+        <!--                            -->
+        <div id="total-counts" class="row">
+            <h1>Running Numbers</h1>
+            <div id="total-all" class="col-sm-6 col-md-3 col-lg-3"></div>
+            <div id="pages-all" class="col-sm-6 col-md-3 col-lg-3"></div>
+            <div id="uniques-all" class="col-sm-6 col-md-3 col-lg-3"></div>
+            <div id="browser-all" class="col-sm-6 col-md-3 col-lg-3"></div>
+        </div>
+
+        <!--                            -->
+        <!-- Weekly Stats               -->
+        <!--                            -->
+        <div id="weekly-counts" class="row">
+            <h1>Weekly Numbers</h1>
+            <div id="total-week" class="col-sm-6 col-md-3 col-lg-3"></div>
+            <div id="pages-week" class="col-sm-6 col-md-3 col-lg-3"></div>
+            <div id="uniques-week" class="col-sm-6 col-md-3 col-lg-3"></div>
+            <div id="browser-week" class="col-sm-6 col-md-3 col-lg-3"></div>
+        </div>
+
+        <div id="token-views-week" class="row visible-md visible-lg">
+            <h1>Weekly Time-Series</h1>
+            <div id="token-views" class="col-md-12 col-lg-12"></div>
+        </div>
+        <div id="token-unique-views-week" class="row visible-md visible-lg">
+            <div id="token-unique-views" class="col-md-12 col-lg-12"></div>
+        </div>
+        <div id="url-views-week" class="row visible-md visible-lg">
+            <div id="url-views" class="col-md-12 col-lg-12"></div>
+        </div>
+
+        <!--                            -->
+        <!-- Device Stats               -->
+        <!--                            -->
+        <div id="pies" class="row">
+            <h1>Device Statistics</h1>
+            <div id="os-pie" class="col-xs-12 col-sm-6 col-md-6 col-lg-6"></div>
+            <div id="os-version-pie" class="col-xs-12 col-sm-6 col-md-6 col-lg-6"></div>
+            <div id="browser-pie" class="col-xs-12 col-sm-6 col-md-6 col-lg-6"></div>
+            <div id="browser-version-pie" class="col-xs-12 col-sm-6 col-md-6 col-lg-6"></div>
+        </div>
+
+        <div id="create-url" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-none="true">&times;</button>
+                        <h4 class="modal-title">Create a Redirect</h4>
+                    </div>
+                    <div class="modal-body">
+                        <h3 class="proto">A protocol <small>( 'http://', 'ftp://', etc)</small> is required</h3>
+                        <p class="proto-help">If you begin typing and do not provide a protocol 'http://' will be filled in when we feel appropriate :)</p>
+                        <br /><br />
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                Shorten: <input id="is-short" type="checkbox">
+                            </span>
+                            <input id="url-input" type="text" class="form-control" placeholder="URL to redirect">
+                        </div><!-- /input-group -->
+
+                        <div class="result">
+                            <h3>Result: <small></small></h3>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="close" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button id="submit" type="button" class="btn btn-primary" onclick="submit();">Create</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+        <script src="/components/jquery/dist/jquery.min.js"></script>
+        <script src="/components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script type="text/javascript">
+            var token = '{{ token }}';
+            var analytics = {
+                identifier: '{{ analytics.identifier }}',
+                keys: {
+                    read: '{{ analytics.keys.read }}'
+                }
+            }
+
+            $("#url-input").keyup(function(event){
+                if(event.keyCode == 13){
+                    $('#create-url .modal-footer #submit').click();
+                } else {
+                    if ( !validUrl($('#url-input').val()) ) {
+                        $('#url-input').css('background-color', '#FF7F7B');
+                    } else {
+                        $('#url-input').css('background-color', '#B9FFC8');
+                    }
+
+                    // if not a backspace, more typed than 'https://', and doesnt contain protocol
+                    // prefix with 'http://'
+                    if (
+                        event.keyCode != 8 &&
+                        $('#url-input').val().length > 8 &&
+                        $('#url-input').val().indexOf('://') < 0
+                    ) {
+                        $('#url-input').val('http://' + $('#url-input').val());
+                    }
+                }
+            });
+
+            resetModal();
+            function resetModal() {
+                $('#create-url .modal-body .result').css('display', 'none');
+                $('#create-url').on('hidden.bs.modal', function () {
+                    $('#create-url .modal-body .proto').css('display', 'block');
+                    $('#create-url .modal-body .proto-help').css('display', 'block');
+                    $('#create-url .modal-body .input-group').css('display', 'table');
+                    $('#create-url .modal-body .result').css('display', 'none');
+                    $('#create-url .modal-body .result h3 > small')[0].innerHTML = '';
+
+                    $('#create-url .modal-footer #submit').css('display', 'inline-block');
+
+                    $('#url-input').val('');
+                    $('#is-short').attr('checked', false);
+                });
+            }
+
+            function submit() {
+                var field = $('#url-input');
+                var url = field.val().replace(/\s+/g, ''); // trim spaces
+
+                if (url.length == 0) { // is empty
+                    $(field)
+                        .val('')
+                        .attr('placeholder', 'ERROR: url must contain something other than whitespace');
+                    return;
+                }
+
+                var finalEndpoint = '/create' + ( $('#is-short').is(':checked') ? '?short=true' : '' );
+                console.log(finalEndpoint);
+                $.ajax({
+                    url:    finalEndpoint,
+                    method: 'POST',
+                    data: {
+                        url: field.val()
+                    },
+                    success: function(res) {
+                        $('#create-url .modal-body .proto').css('display', 'none');
+                        $('#create-url .modal-body .proto-help').css('display', 'none');
+                        $('#create-url .modal-body .input-group').css('display', 'none');
+                        $('#create-url .modal-body .result').css('display', 'block');
+
+                        $('#create-url .modal-body .result h3 > small')[0].innerHTML = '<a href="' + res.url + '">' + res.url + '</a>';
+
+                        $('#create-url .modal-footer #submit').css('display', 'none');
+                    },
+                    error: function(err) {
+                        $(field).attr('placeholder', 'ERROR: ' + err);
+                    }
+                });
+            }
+
+            function validUrl(url) {
+                return /^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(url);
+            }
+        </script>
+        <script src="/javascripts/graphs.js"></script>
+    </body>
+</html

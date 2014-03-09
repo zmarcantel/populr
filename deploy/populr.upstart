@@ -1,0 +1,22 @@
+description "populr server upstart"
+version "1.0"
+
+expect fork
+
+start on started networking
+stop on shutdown
+
+# Automatically Respawn:
+respawn
+respawn limit 20 5
+
+env API_DIR=/srv/populr
+
+# it is best to run under a limited permission user
+# if you do not have one and do not want to make one, uncomment these
+setuid node
+setgid node
+
+script
+    node $API_DIR/app.js &
+end script
