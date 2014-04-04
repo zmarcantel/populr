@@ -12,6 +12,7 @@ RUN apt-get install -y git nginx
 RUN cd /srv && git clone https://github.com/zmarcantel/populr
 
 ## install deps
+RUN npm install -g bower
 RUN cd /srv/populr && npm install && bower install
 
 ## setup nginx conf
