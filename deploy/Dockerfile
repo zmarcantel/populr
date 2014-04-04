@@ -10,10 +10,9 @@ RUN apt-get install -y git nginx
 
 ## copy the source
 RUN cd /srv && git clone https://github.com/zmarcantel/populr
-RUN cd populr
 
 ## install deps
-RUN npm install && bower install
+RUN cd /srv/populr && npm install && bower install
 
 ## setup nginx conf
 ADD populr.nginx /etc/nginx/sites-available/populr
